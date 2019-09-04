@@ -2,6 +2,7 @@ package com.learn.java.demo.provider;
 
 import com.alibaba.fastjson.JSON;
 import com.learn.java.demo.dto.AccessTokenDTO;
+import com.learn.java.demo.dto.GithubUser;
 import okhttp3.*;
 import org.springframework.stereotype.Component;
 
@@ -9,6 +10,11 @@ import java.io.IOException;
 
 @Component
 public class GithubProvider {
+    /**
+     * 获取GitHub AccessToken
+     * @param accessTokenDTO
+     * @return
+     */
     public String getAccessToken(AccessTokenDTO accessTokenDTO)
     {
         MediaType mediaType = MediaType.get("application/json; charset=utf-8");
@@ -21,12 +27,36 @@ public class GithubProvider {
                 .build();
         try (Response response = client.newCall(request).execute()) {
             String string = response.body().string();
+            String token = string.split("&")[0].split("=")[1];
             System.out.println(string);
-            return string;
-        } catch (IOException e) {
+            return token;
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
+        return null;
+    }
+
+    /**
+     * 获取用户信息
+     * @param accessToken
+     * @return
+     */
+    public GithubUser githubUser(String accessToken)
+    {
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request.Builder()
+                .url("https://api.github.com/user?access_token"+accessToken)
+                .build();
+
+        try {
+            Response response = client.newCall(request).execute();
+            String string = response.body().string();
+            GithubUser githubUser = JSON.parseObject(string, GithubUser.class);
+            return githubUser;
+        } catch (IOException e) {
+
+        }
         return null;
     }
 
