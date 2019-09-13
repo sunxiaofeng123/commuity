@@ -15,3 +15,5 @@
 [H2](http://www.h2database.com/html/quickstart.html)
 
 [Mybatis](http://www.mybatis.org/mybatis-3/)
+
+[lombok](https://projectlombok.org)
